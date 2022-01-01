@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include openwayes *.css
+recursive-include openwayes *.csv
+recursive-include openwayes *.html
+recursive-include openwayes *.ico
+recursive-include openwayes *.js
+recursive-include openwayes *.json
+recursive-include openwayes *.md
+recursive-include openwayes *.png
+recursive-include openwayes *.py
+recursive-include openwayes *.svg
+recursive-include openwayes *.txt
+recursive-exclude openwayes *.pyc
