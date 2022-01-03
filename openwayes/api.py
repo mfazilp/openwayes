@@ -679,6 +679,8 @@ def get_price_list_rate(args, item_doc, out=None):
             if args.price_list and args.rate:
                 insert_item_price(args)
             return out
+	print(">>>>>>>>>>>>>>>>>"*20)
+	print(get_rate(args))
         if get_rate(args) > 0:
             out.price_list_rate = get_rate(args)
         else:
