@@ -653,47 +653,48 @@ def get_default_supplier(args, item, item_group, brand):
 		or brand.get("default_supplier"))
 
 def get_price_list_rate(args, item_doc, out=None):
-    if out is None:
-        out = frappe._dict()
+	if out is None:
+		out = frappe._dict()
 
-    meta = frappe.get_meta(args.parenttype or args.doctype)
+	meta = frappe.get_meta(args.parenttype or args.doctype)
 
-    if meta.get_field("currency") or args.get('currency'):
-        if not args.get("price_list_currency") or not args.get("plc_conversion_rate"):
-            # if currency and plc_conversion_rate exist then
-            # `get_price_list_currency_and_exchange_rate` has already been called
-            pl_details = get_price_list_currency_and_exchange_rate(args)
-            args.update(pl_details)
+	if meta.get_field("currency") or args.get('currency'):
+		if not args.get("price_list_currency") or not args.get("plc_conversion_rate"):
+			# if currency and plc_conversion_rate exist then
+			# `get_price_list_currency_and_exchange_rate` has already been called
+			pl_details = get_price_list_currency_and_exchange_rate(args)
+			args.update(pl_details)
 
-        if meta.get_field("currency"):
-            validate_conversion_rate(args, meta)
+		if meta.get_field("currency"):
+			validate_conversion_rate(args, meta)
 
-        price_list_rate = get_price_list_rate_for(args, item_doc.name)
+		price_list_rate = get_price_list_rate_for(args, item_doc.name)
 
-        # variant
-        if price_list_rate is None and item_doc.variant_of:
-            price_list_rate = get_price_list_rate_for(args, item_doc.variant_of)
+		# variant
+		if price_list_rate is None and item_doc.variant_of:
+			price_list_rate = get_price_list_rate_for(args, item_doc.variant_of)
 
-        # insert in database
-        if price_list_rate is None:
-            if args.price_list and args.rate:
-                insert_item_price(args)
-            return out
-        if get_rate(args) > 0:
-            out.price_list_rate = get_rate(args)
-        else:
-            out.price_list_rate = flt(price_list_rate) * flt(args.plc_conversion_rate) \
+		# insert in database
+		if price_list_rate is None:
+			if args.price_list and args.rate:
+				insert_item_price(args)
+			return out
+		if get_rate(args) > 0:
+			out.previous_rate = get_rate(args)
+			out.price_list_rate = get_rate(args)
+		else:
+			out.price_list_rate = flt(price_list_rate) * flt(args.plc_conversion_rate) \
 			/ flt(args.conversion_rate)
-        
-        
-        
-            
-        if not out.price_list_rate and args.transaction_type=="buying":
-            from erpnext.stock.doctype.item.item import get_last_purchase_details
-            out.update(get_last_purchase_details(item_doc.name,
-                args.name, args.conversion_rate))
+		
+		
+		
+			
+		if not out.price_list_rate and args.transaction_type=="buying":
+			from erpnext.stock.doctype.item.item import get_last_purchase_details
+			out.update(get_last_purchase_details(item_doc.name,
+				args.name, args.conversion_rate))
 
-    return out
+	return out
 def get_rate(args):
     se_list = frappe.db.get_all("Sales Invoice",{"customer":args.get("customer"),"docstatus":1})
     item_price = None
