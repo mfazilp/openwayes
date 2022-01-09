@@ -680,8 +680,10 @@ def get_price_list_rate(args, item_doc, out=None):
 				insert_item_price(args)
 			return out
 		if get_rate(args) > 0:
+			out.price_list_rate = flt(price_list_rate) * flt(args.plc_conversion_rate) \
+			/ flt(args.conversion_rate)
 			out.previous_rate = get_rate(args)
-			out.price_list_rate = get_rate(args)
+			#out.price_list_rate = get_rate(args)
 		else:
 			out.price_list_rate = flt(price_list_rate) * flt(args.plc_conversion_rate) \
 			/ flt(args.conversion_rate)
