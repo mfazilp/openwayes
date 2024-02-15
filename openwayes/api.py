@@ -2571,3 +2571,4 @@ def get_reserved_qty_for_so(sales_order, item_code):
 		return reserved_qty[0][0]
 	else:
 		return 0
+# change file
